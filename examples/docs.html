@@ -308,8 +308,10 @@ move('#example-12 .box')
           or returning a clone for chaining. The <code>Move#pop()</code> method is used to return the current <code>Move</code> instance's parent in the chain.</p>
         <a href="#" class="play">Play</a>
         <div class="sandbox">
-          <div class="box small"></div>
-          <div class="box box2 small"></div>
+          <div class="box small">
+            <div id="innerBox">hi</div>
+          </div>
+          <div class="box box2 small" id="ex13box2"></div>
         </div>
         <pre class="source">
           <code>
@@ -518,27 +520,25 @@ move.version = "n.n.n";
           .set('background-color', 'white')
           .x(0);
 
-        move('#example-13 .box')
+        var move1 = move('#example-13 .box')
           .set('background-color', 'red')
           .x(500)
-          .then(moveBack)
-          .end();
-
-        move('#example-13 .box2')
-          .set('background-color', 'red')
-          .x(500)
-          .scale(.5)
-          .rotate(60)
-            .then()
-              .rotate(30)
-              .scale(1.5)
-              .set('border-radius', 5)
-              .set('background-color', 'white')
-              .then()
-                .set('opacity', 0)
-                .pop()
-              .pop()
-          .end();
+        var move2a = move('#example-13 .box2')
+          .translateX(50)
+        var move2b = move('#innerBox')
+          .translateX(50)
+        
+      if (true) {
+      // Works as expected
+        move1.then(move2a)
+        move2a.then().translateX(-25).then(moveBack)
+        move1.end()
+      } else {
+      // doesn't work
+        move1.then(move2b)
+        move2b.then().translateX(-25).then(moveBack)
+        move1.end()
+      }
       });
     </script>
     </div>
