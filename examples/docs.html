@@ -306,6 +306,7 @@ move('#example-12 .box')
         <p>Defer an action such as invoking a <em>fn</em>,
           <code>end()</code>ing the given <code>Move</code> instance,
           or returning a clone for chaining. The <code>Move#pop()</code> method is used to return the current <code>Move</code> instance's parent in the chain.</p>
+        <input id="doNest" type="checkbox"/> show nesting issue <br/>
         <a href="#" class="play">Play</a>
         <div class="sandbox">
           <div class="box small">
@@ -315,31 +316,29 @@ move('#example-12 .box')
         </div>
         <pre class="source">
           <code>
-var moveBack = move('#example-13 .box')
-  .set('background-color', 'white')
-  .x(0);
+        var moveBack = move('#example-13 .box')
+          .set('background-color', 'white')
+          .x(0);
 
-move('#example-13 .box')
-  .set('background-color', 'red')
-  .x(500)
-  .then(moveBack)
-  .end();
-
-move('#example-13 .box2')
-  .set('background-color', 'red')
-  .x(500)
-  .scale(.5)
-  .rotate(60)
-    .then()
-      .rotate(30)
-      .scale(1.5)
-      .set('border-radius', 5)
-      .set('background-color', 'white')
-      .then()
-        .set('opacity', 0)
-        .pop()
-      .pop()
-  .end();
+        var move1 = move('#example-13 .box')
+          .set('background-color', 'red')
+          .x(500)
+        var move2a = move('#example-13 .box2')
+          .translateX(50)
+        var move2b = move('#innerBox')
+          .translateX(50)
+        
+      if (!document.getElementById("doNest").checked) {
+      // Works as expected
+        move1.then(move2a)
+        move2a.then().translateX(-25).then(moveBack)
+        move1.end()
+      } else {
+      // doesn't work
+        move1.then(move2b)
+        move2b.then().translateX(-25).then(moveBack)
+        move1.end()
+      }
           </code>
         </pre>
       </div>
@@ -528,7 +527,7 @@ move.version = "n.n.n";
         var move2b = move('#innerBox')
           .translateX(50)
         
-      if (true) {
+      if (!document.getElementById("doNest").checked) {
       // Works as expected
         move1.then(move2a)
         move2a.then().translateX(-25).then(moveBack)
